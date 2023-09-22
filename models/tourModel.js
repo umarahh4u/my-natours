@@ -12,111 +12,111 @@ const tourSchema = new mongoose.Schema(
       unique: true,
       trim: true,
       maxLength: [40, 'A tour name must have less or equal than 40 characters'],
-      minLength: [10, 'A tour name must have more or equal than 10 characters'],
+      minLength: [10, 'A tour name must have more or equal than 10 characters']
       //   validate: [validator.isAlpha, 'Tour Name must only contain characters'],
     },
     slug: String,
     duration: {
       type: Number,
-      required: [true, 'A tour must have a duration'],
+      required: [true, 'A tour must have a duration']
     },
     maxGroupSize: {
       type: Number,
-      required: [true, 'A Tour must have a group size'],
+      required: [true, 'A Tour must have a group size']
     },
     difficulty: {
       type: String,
       required: [true, 'A tour must have a difficulty'],
       enum: {
         values: ['easy', 'medium', 'difficult'],
-        message: 'Difficulty is either: easy, medium or difficult',
-      },
+        message: 'Difficulty is either: easy, medium or difficult'
+      }
     },
     ratingsAverage: {
       type: Number,
       default: 4.5,
       min: [1, 'Rating must be above 1.0'],
       max: [5, 'Rating must be below 5.0'],
-      set: (val) => Math.round(val * 10) / 10, //
+      set: val => Math.round(val * 10) / 10 //
     },
     ratingsQuantity: {
       type: Number,
-      default: 0,
+      default: 0
     },
     price: {
       type: Number,
-      required: [true, 'A tour must have a price'],
+      required: [true, 'A tour must have a price']
     },
     priceDiscount: {
       type: Number,
       validate: {
-        validator: function (val) {
+        validator: function(val) {
           // this only point to current doc on NEW doc creation
           return val < this.price;
         },
-        message: 'Discount price ({VALUE}) should be below regular price',
-      },
+        message: 'Discount price ({VALUE}) should be below regular price'
+      }
     },
     summary: {
       type: String,
       trim: true,
-      required: [true, 'A tour must have a summary'],
+      required: [true, 'A tour must have a summary']
     },
     description: {
       type: String,
-      trim: true,
+      trim: true
     },
     imageCover: {
       type: String,
-      required: [true, 'A tour must have a cover image'],
+      required: [true, 'A tour must have a cover image']
     },
     images: [String],
     createdAt: {
       type: Date,
       default: Date.now(),
-      select: false,
+      select: false
     },
     startDates: [Date],
     secretTour: {
       type: Boolean,
-      default: false,
+      default: false
     },
     startLocation: {
       // GeoJSON
       type: {
         type: String,
         default: 'Point',
-        enum: ['Point'],
+        enum: ['Point']
       },
       coordinates: [Number],
       address: String,
-      description: String,
+      description: String
     },
     locations: [
       {
         type: {
           type: String,
           default: 'Point',
-          enum: ['Point'],
+          enum: ['Point']
         },
         coordinates: [Number],
         address: String,
         description: String,
-        day: Number,
-      },
+        day: Number
+      }
     ],
     guides: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: 'User',
-      },
-    ],
+        ref: 'User'
+      }
+    ]
     // child referencing
     // reviews: [{ type: mongoose.Schema.ObjectId, ref: 'Review' }],
   },
   {
     toJSON: { virtuals: true },
-    toObject: { virtuals: true },
+    toObject: { virtuals: true }
   }
 );
 
@@ -126,7 +126,7 @@ tourSchema.index({ slug: 1 });
 tourSchema.index({ startLocation: '2dsphere' });
 
 // we can not use virtual properties on query
-tourSchema.virtual('durationWeeks').get(function () {
+tourSchema.virtual('durationWeeks').get(function() {
   return this.duration / 7;
 });
 
@@ -134,11 +134,11 @@ tourSchema.virtual('durationWeeks').get(function () {
 tourSchema.virtual('reviews', {
   ref: 'Review',
   foreignField: 'tour',
-  localField: '_id',
+  localField: '_id'
 });
 
 //DOCUMENT MIDDLEWARE: run b4 .save() .create() !.insertMany()
-tourSchema.pre('save', function (next) {
+tourSchema.pre('save', function(next) {
   this.slug = slugify(this.name, { lower: true });
 
   next();
@@ -165,27 +165,27 @@ tourSchema.pre('save', function (next) {
 
 // QUERY MIDDLEWARE:
 // instead of checking for findOne -> use regular expression
-tourSchema.pre(/^find/, function (next) {
+tourSchema.pre(/^find/, function(next) {
   this.find({ secretTour: { $ne: true } });
   this.start = Date.now();
 
   next();
 });
 
-tourSchema.pre(/^find/, function (next) {
+tourSchema.pre(/^find/, function(next) {
   this.populate({
     path: 'guides',
-    select: '-__v -passwordChangedAt',
+    select: '-__v -passwordChangedAt'
   });
   next();
 });
 
-tourSchema.post(/^find/, function (docs, next) {
-  console.log(`Query took ${Date.now() - this.start} milliseconds`);
-  //   console.log(docs);
+// tourSchema.post(/^find/, function (docs, next) {
+//   console.log(`Query took ${Date.now() - this.start} milliseconds`);
+//   //   console.log(docs);
 
-  next();
-});
+//   next();
+// });
 
 //AGGREFATION MIDDLEWARE
 // tourSchema.pre('aggregate', function (next) {

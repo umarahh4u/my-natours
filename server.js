@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 
-process.on('uncaughtException', (err) => {
+process.on('uncaughtException', err => {
   console.log('UNCAUGHT EXCEPTION! 😐 Shutting down...');
   console.log(err.name, err.message);
   process.exit(1);
@@ -25,7 +25,7 @@ mongoose
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
-    useUnifiedTopology: true,
+    useUnifiedTopology: true
   })
   .then(() => console.log('DB Connection Successfull'));
 
@@ -35,7 +35,7 @@ const server = app.listen(port, () => {
   console.log(`App runnung on port ${port}`);
 });
 
-process.on('unhandledRejection', (err) => {
+process.on('unhandledRejection', err => {
   console.log('UNHANDLER REJECTION! 😐 Shutting down...');
   console.log(err.name, err.message);
   server.close(() => {
