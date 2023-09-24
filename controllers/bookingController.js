@@ -1,9 +1,8 @@
-/* eslint-disable node/no-extraneous-require */
-/* eslint-disable import/no-unresolved */
 /* eslint-disable import/no-extraneous-dependencies */
 // eslint-disable-next-line node/no-unpublished-require
-const stripe = require('Stripe')(process.env.STRIPE_SECRET_KEY);
+const Stripe = require('stripe');
 
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 const Tour = require('../models/tourModel');
 const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
