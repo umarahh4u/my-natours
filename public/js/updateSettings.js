@@ -1,3 +1,4 @@
+/*  eslint-disable */
 // update data
 import axios from 'axios';
 
