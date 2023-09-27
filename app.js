@@ -17,6 +17,7 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
+const bookingController = require('./controllers/bookingController');
 const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
@@ -62,6 +63,13 @@ if (process.env.NODE_ENV === 'development') {
 
 // Limit requests from same API
 app.use('/api', limiter);
+
+// reason why this is here, is that we need the body in raw form not in json if not is not going to work
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout
+);
 
 // To use middleware
 // Body parser, reading data from body into req.body
