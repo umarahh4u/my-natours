@@ -6,10 +6,12 @@ import { login, logout } from './login';
 import { updateSettings } from './updateSettings';
 import { bookTour } from './stripe';
 import { showAlert } from './alerts';
+import { signUp } from './signup';
 
 // DOM Elements
 const mapBox = document.getElementById('map');
 const loginForm = document.querySelector('.form--login');
+const signUpForm = document.querySelector('.form--signup');
 const logoutBtn = document.querySelector('.nav__el--logout');
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
@@ -28,6 +30,20 @@ if (loginForm) {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     login(email, password);
+  });
+}
+
+if (signUpForm) {
+  signUpForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const passwordConfirm = document.getElementById('passwordConfirm').value;
+    document.querySelector('#btn-create-account').textContent = 'Creating...';
+    await signUp(name, email, password, passwordConfirm);
+    document.querySelector('#btn-create-account').textContent =
+      'Create Account';
   });
 }
 
